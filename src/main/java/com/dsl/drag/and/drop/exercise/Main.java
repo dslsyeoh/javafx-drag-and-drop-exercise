@@ -1,3 +1,8 @@
+/*
+ * Author Steven Yeoh
+ * Copyright (c) 2020. All rights reserved
+ */
+
 package com.dsl.drag.and.drop.exercise;
 
 import javafx.application.Application;
@@ -17,7 +22,7 @@ public class Main extends Application
     {
         launch(args);
     }
-    
+
     @Override
     public void init() throws Exception
     {
