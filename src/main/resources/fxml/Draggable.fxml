@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import org.tbee.javafx.scene.layout.fxml.MigPane?>
+
+<MigPane xmlns="http://javafx.com/javafx"
+         xmlns:fx="http://javafx.com/fxml"
+         layout="ins 10, wrap" cols="[]"
+         fx:controller="com.dsl.drag.and.drop.exercise.DraggableController">
+
+    <Label text="Hello World" />
+</MigPane>
