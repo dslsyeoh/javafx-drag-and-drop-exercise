@@ -1,0 +1,10 @@
+.frame
+{
+    -fx-border-color: grey;
+    -fx-border-width: 2;
+}
+
+.padding
+{
+    -fx-padding: 10px;
+}

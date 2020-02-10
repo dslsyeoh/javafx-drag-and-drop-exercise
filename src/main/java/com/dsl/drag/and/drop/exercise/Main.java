@@ -36,6 +36,7 @@ public class Main extends Application
         Parent parent = ContextProvider.load(getClass().getResource("/fxml/Draggable.fxml"));
 
         Scene scene = new Scene(parent, 600, 400);
+        scene.getStylesheets().add(Main.class.getResource("/css/style.css").toExternalForm());
         stage.setScene(scene);
         stage.show();
     }

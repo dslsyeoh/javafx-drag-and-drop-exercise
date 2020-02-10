@@ -5,8 +5,19 @@
 
 <MigPane xmlns="http://javafx.com/javafx"
          xmlns:fx="http://javafx.com/fxml"
-         layout="ins 10, wrap" cols="[]"
+         layout="ins 10, wrap" cols="[grow]10[grow]" rows="[grow]"
          fx:controller="com.dsl.drag.and.drop.exercise.DraggableController">
 
-    <Label text="Hello World" />
+    <MigPane layout="ins 10, hidemode 3, wrap" cols="[grow]" MigPane.cc="grow" styleClass="frame">
+        <Label text="Drag Here" MigPane.cc="growx"/>
+        <MigPane fx:id="source" layout="ins 0, wrap" cols="[grow]" MigPane.cc="growx">
+            <Label text="Item 1" styleClass="frame, padding" MigPane.cc="growx"/>
+        </MigPane>
+        <MigPane fx:id="source2" layout="ins 0, wrap" cols="[grow]" MigPane.cc="growx">
+            <Label text="Item 2" styleClass="frame, padding" MigPane.cc="growx"/>
+        </MigPane>
+    </MigPane>
+    <MigPane fx:id="target" layout="ins 10, wrap" cols="[grow]" MigPane.cc="grow" styleClass="frame">
+        <Label text="Drop Here"/>
+    </MigPane>
 </MigPane>
