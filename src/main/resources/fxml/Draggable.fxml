@@ -3,19 +3,25 @@
 <?import javafx.scene.control.*?>
 <?import org.tbee.javafx.scene.layout.fxml.MigPane?>
 
+<?import com.dsl.drag.and.drop.exercise.CustomNode?>
 <MigPane xmlns="http://javafx.com/javafx"
          xmlns:fx="http://javafx.com/fxml"
-         layout="ins 10, wrap" cols="[grow]10[grow]" rows="[grow]"
+         layout="ins 10, wrap" cols="[200!]10[grow]" rows="[grow]"
          fx:controller="com.dsl.drag.and.drop.exercise.DraggableController">
 
-    <MigPane layout="ins 10, hidemode 3, wrap" cols="[grow]" MigPane.cc="grow" styleClass="frame">
-        <Label text="Drag Here" MigPane.cc="growx"/>
-        <MigPane fx:id="source" layout="ins 0, wrap" cols="[grow]" MigPane.cc="growx">
+    <fx:define>
+        <CustomNode fx:id="container" layout="ins 10, hidemode 3, wrap" cols="[grow]" MigPane.cc="grow" styleClass="frame"/>
+    </fx:define>
+    <MigPane fx:id="dragContainer" layout="ins 10, hidemode 3, wrap" cols="[grow]" MigPane.cc="grow" styleClass="frame">
+        <CustomNode fx:id="source" layout="ins 0, wrap" cols="[grow]" MigPane.cc="growx" groupId="1" root="true">
             <Label text="Item 1" styleClass="frame, padding" MigPane.cc="growx"/>
-        </MigPane>
-        <MigPane fx:id="source2" layout="ins 0, wrap" cols="[grow]" MigPane.cc="growx">
+        </CustomNode>
+        <CustomNode fx:id="source2" layout="ins 0, wrap" cols="[grow]" MigPane.cc="growx" groupId="2" root="true">
             <Label text="Item 2" styleClass="frame, padding" MigPane.cc="growx"/>
-        </MigPane>
+        </CustomNode>
+        <CustomNode fx:id="source3" layout="ins 0, wrap" cols="[grow]" MigPane.cc="growx" groupId="2">
+            <Label text="Sub item 2" styleClass="frame, padding" MigPane.cc="growx"/>
+        </CustomNode>
     </MigPane>
     <MigPane fx:id="target" layout="ins 10, wrap" cols="[grow]" MigPane.cc="grow" styleClass="frame">
         <Label text="Drop Here"/>

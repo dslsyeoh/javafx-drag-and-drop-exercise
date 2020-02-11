@@ -5,6 +5,7 @@
 
 package com.dsl.drag.and.drop.exercise;
 
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
@@ -12,32 +13,46 @@ import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Label;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.DataFormat;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import org.springframework.stereotype.Component;
-import org.tbee.javafx.scene.layout.fxml.MigPane;
+import org.tbee.javafx.scene.layout.MigPane;
 
 import java.net.URL;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Objects;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Component("draggableController")
 public class DraggableController implements Initializable
 {
     @FXML
-    private MigPane source;
+    private MigPane dragContainer;
 
     @FXML
-    private MigPane source2;
+    private CustomNode source;
+
+    @FXML
+    private CustomNode source2;
+
+    @FXML
+    private CustomNode source3;
 
     @FXML
     private MigPane target;
 
+    private final DataFormat IS_ROOT = new DataFormat("isRoot");
+    private final DataFormat ROOT_TEXT = new DataFormat("rootText");
+    private final DataFormat CHILD_TEXT = new DataFormat("childText");
+
     @Override
     public void initialize(URL location, ResourceBundle resources)
     {
-        Stream.of(source, source2).forEach(node -> {
+        dragContainer.getChildren().stream().map(CustomNode.class::cast).forEach(node -> {
             setOnDragDetected(node);
             setOnDragDone(node);
         });
@@ -45,24 +60,49 @@ public class DraggableController implements Initializable
         setOnDragDropped();
     }
 
-    private void setOnDragDetected(MigPane node) {
+    private void setOnDragDetected(CustomNode node) {
 
         node.setOnDragDetected(event -> {
-            System.out.println("onDragDetected");
+            ClipboardContent content = new ClipboardContent();
+            content.putString(getText(node));
+            content.put(IS_ROOT, node.isRoot());
+
+            for (Node value : dragContainer.getChildren())
+            {
+                CustomNode customNode = (CustomNode) value;
+                if (!Objects.equals(customNode, node) && Objects.equals(node.getGroupId(), customNode.getGroupId()))
+                {
+                    if (customNode.isRoot())
+                    {
+                        node.add(0, customNode, "growx");
+                        content.put(ROOT_TEXT, getText(customNode));
+                    }
+                    else
+                    {
+                        content.put(CHILD_TEXT, getText(customNode));
+                        node.add(customNode, "growx");
+                    }
+                    break;
+                }
+            }
+
             Dragboard db = node.startDragAndDrop(TransferMode.MOVE);
             db.setDragView(getSnapshot(node), event.getX(), event.getY());
-            ClipboardContent content = new ClipboardContent();
-            content.putString(((Label) node.getChildren().get(0)).getText());
             db.setContent(content);
             event.consume();
+
         });
+    }
+
+    private String getText(CustomNode node)
+    {
+        return ((Label) node.getChildren().get(0)).getText();
     }
 
     private void setOnDragOver()
     {
         target.setOnDragOver(event -> {
-            System.out.println("onDragOver");
-            if(!Objects.equals(event.getGestureSource(), target) && event.getDragboard().hasString())
+            if(!Objects.equals(event.getGestureSource(), target))
             {
                 event.acceptTransferModes(TransferMode.MOVE);
             }
@@ -73,11 +113,20 @@ public class DraggableController implements Initializable
     private void setOnDragDropped()
     {
         target.setOnDragDropped(event -> {
-            System.out.println("onDragDropped");
             Dragboard db = event.getDragboard();
             if(Objects.equals(event.getGestureTarget(), target))
             {
-                target.add(create(db.getString()), "growx");
+                if(!Boolean.parseBoolean(db.getContent(IS_ROOT).toString()))
+                {
+                    target.add(create(db.getContent(ROOT_TEXT).toString()), "growx");
+                    target.add(create(db.getString()), "growx");
+                }
+                else
+                {
+                    target.add(create(db.getString()), "growx");
+                    target.add(create(db.getContent(CHILD_TEXT).toString()), "growx");
+                }
+                db.clear();
                 event.setDropCompleted(true);
             }
             else
@@ -88,12 +137,9 @@ public class DraggableController implements Initializable
         });
     }
 
-    private void setOnDragDone(MigPane node)
+    private void setOnDragDone(CustomNode node)
     {
-        node.setOnDragDone(event -> {
-            System.out.println("onDragDone");
-            node.setVisible(false);
-        });
+        node.setOnDragDone(event -> node.setVisible(false));
     }
 
     private WritableImage getSnapshot(Node node)
